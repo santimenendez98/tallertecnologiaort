@@ -1,6 +1,7 @@
 #!/bin/bash
 
 usuarios="usuarios.txt";
+diccionario="diccionario.txt";
 
 datoIncorrecto=true;
 
@@ -16,9 +17,10 @@ menu_principal(){
 	echo "4) Ingresar letra inicial"
 	echo "5) Ingresar letra final"
 	echo "6) Ingresar letra contenida"
-	read dato
+	echo "7) Buscar la palabra"
+	read dato;
 
-	while [[ $dato != "1" && $dato != "2" && $dato != "3" && $dato != "4" && $dato != "5" && $dato != "6" ]]; do
+	while [[ $dato != "1" && $dato != "2" && $dato != "3" && $dato != "4" && $dato != "5" && $dato != "6" && $dato != "7" ]]; do
 		echo "Dato ingresado incorrecto"
 		read dato
 	done;
@@ -81,9 +83,26 @@ menu_principal(){
                 done
                 echo "Letra contenida guardada"
                 menu_principal
+	elif [ $dato = "7" ]; then
+		verificarPrimerLetra="${letraInicial:0:1}"
+		verificarUltimaletra="${letraFinal: -1}"
+		verificarLetraContenida="$letraContenida"
+
+		if [ ${#letraInicial} -ne 1 ] || [ ${#letraFinal} -ne 1 ] || [ ${#letraContenida} -ne 1 ]; then
+			echo "Se debe ingresar todos los datos antes de buscar la palabra"
+			menu_principal
+		else
+			grep "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario
+			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
+			read dato
+			while [[ $dato != "s" && $dato != "S" ]]; do
+				echo "Dato incorrecto"
+				read dato
+			done
+			menu_principal
+		fi
 	fi
 }
-
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
 
 while $datoIncorrecto; do
@@ -100,6 +119,7 @@ while $datoIncorrecto; do
 		echo "Inicio de sesion correcto"
 		echo "Bienvenido/a $nombre"
 		menu_principal;
+
 	else
 		datoIncorrecto=true;
 		echo "Usuario y/o password no existen"
