@@ -5,6 +5,16 @@ diccionario="diccionario.txt";
 
 datoIncorrecto=true;
 
+#En esta parte se encuentra la funcion de validar error, es una funcion que valida el digito para salir de cada submenu
+
+validar_error(){
+	while [[ $1 != "s" && $1 != "S" ]]; do
+        	 echo "Dato incorrecto"
+                 read $1
+        done
+
+}
+
 #En esta parte se encuentra la funcion de menu principal con toda su logica dentro
 
 menu_principal(){
@@ -19,27 +29,27 @@ menu_principal(){
 	echo "6) Ingresar letra contenida"
 	echo "7) Buscar la palabra"
 	read dato;
+	datoNumero=$((dato))
 
-	while [[ $dato != "1" && $dato != "2" && $dato != "3" && $dato != "4" && $dato != "5" && $dato != "6" && $dato != "7" ]]; do
+	while [[ $datoNumero -lt 1 || $datoNumero -gt 7 ]]; do
 		echo "Dato ingresado incorrecto"
-		read dato
+		read dato;
+		datoNumero=$((dato));
 	done;
 
-	if [ $dato = "1" ]; then
+	if [ $datoNumero = 1 ]; then
 		cat $usuarios;
 		echo "Para volver digite (S)"
 		read salir;
-		while [[ $salir != "S" && $salir != "s" ]]; do
-			echo "Dato ingresado incorrecto"
-                        read salir
-		done;
+		validar_error $salir
 		menu_principal;
-	elif [ $dato = "2" ]; then
+	elif [ $datoNumero = 2 ]; then
 		echo "Ingrese nombre de nuevo usuario"
 		read nuevoNombreUsuario;
 		echo "Ingrese password"
 		read nuevaPassword;
 		nuevoUsuario="usuario: $nuevoNombreUsuario, password: $nuevaPassword"
+		
 		if grep -q "usuario: $nuevoNombreUsuario" $usuarios; then
 		       	echo "El usuario ya existe"
 		       	menu_principal
@@ -48,7 +58,7 @@ menu_principal(){
 	 		echo "Usuario creado correctamente"
 			menu_principal
 		fi		
-	elif [ $dato = "3" ]; then
+	elif [ $datoNumero = 3 ]; then
 		echo "Estas seguro de cerrar sesion? Ingrese (S) de lo contrario se volvera al menu principal"
 		read alerta;
 		if [ $alerta = "S" ] || [ $alerta = "s" ]; then
@@ -56,7 +66,7 @@ menu_principal(){
 		else
 			menu_principal
 		fi
-	elif [ $dato = "4" ]; then
+	elif [ $datoNumero = 4 ]; then
 		echo "Ingrese la letra inicial"
 		read letraInicial
 		while [ ${#letraInicial} -ne 1 ]; do
@@ -65,7 +75,7 @@ menu_principal(){
 		done
 		echo "Letra inicial guardada"
 		menu_principal
-	elif [ $dato = "5" ]; then
+	elif [ $datoNumero = 5 ]; then
 		echo "Ingrese la letra final"
                 read letraFinal
                 while [ ${#letraFinal} -ne 1 ]; do
@@ -74,7 +84,7 @@ menu_principal(){
                 done
                 echo "Letra final guardada"
                 menu_principal
-	elif [ $dato = "6" ]; then
+	elif [ $datoNumero = 6 ]; then
 		echo "Ingrese la letra contenida"
                 read letraContenida
                 while [ ${#letraContenida} -ne 1 ]; do
@@ -83,7 +93,7 @@ menu_principal(){
                 done
                 echo "Letra contenida guardada"
                 menu_principal
-	elif [ $dato = "7" ]; then
+	elif [ $datoNumero = 7 ]; then
 		verificarPrimerLetra="${letraInicial:0:1}"
 		verificarUltimaletra="${letraFinal: -1}"
 		verificarLetraContenida="$letraContenida"
@@ -95,14 +105,12 @@ menu_principal(){
 			grep "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario
 			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
 			read dato
-			while [[ $dato != "s" && $dato != "S" ]]; do
-				echo "Dato incorrecto"
-				read dato
-			done
+			validar_error $dato
 			menu_principal
 		fi
 	fi
 }
+
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
 
 while $datoIncorrecto; do
