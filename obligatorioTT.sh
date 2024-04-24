@@ -2,7 +2,7 @@
 
 usuarios="usuarios.txt";
 diccionario="diccionario.txt";
-
+registroDiccionario="registroDiccionario.txt";
 datoIncorrecto=true;
 
 #En esta parte se encuentra la funcion de validar error, es una funcion que valida el digito para salir de cada submenu
@@ -29,7 +29,7 @@ menu_principal(){
 	echo "6) Ingresar letra contenida"
 	echo "7) Buscar la palabra"
 	read dato;
-	datoNumero=$((dato))
+	datoNumero=$((dato));
 
 	while [[ $datoNumero -lt 1 || $datoNumero -gt 7 ]]; do
 		echo "Dato ingresado incorrecto"
@@ -94,6 +94,9 @@ menu_principal(){
                 echo "Letra contenida guardada"
                 menu_principal
 	elif [ $datoNumero = 7 ]; then
+
+		#Opcion para devolver palabras del diccionario que cumplen con la opcion 4,5 y 6. Aparte crea un registro dentro del archivo registroDiccionario.txt
+
 		verificarPrimerLetra="${letraInicial:0:1}"
 		verificarUltimaletra="${letraFinal: -1}"
 		verificarLetraContenida="$letraContenida"
@@ -102,7 +105,14 @@ menu_principal(){
 			echo "Se debe ingresar todos los datos antes de buscar la palabra"
 			menu_principal
 		else
-			grep "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario
+			fecha=$(date +"%Y-%m-%d")
+                        palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
+                        palabrasDiccionario=$(grep -c "" $diccionario)
+			porcentaje=$(bc <<< "scale=2; ($palabrasEncontradas * 100 / $palabrasDiccionario)")
+                        grep "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario
+
+                        registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
+                        echo "$registro" >> $registroDiccionario
 			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
 			read dato
 			validar_error $dato
@@ -126,7 +136,7 @@ while $datoIncorrecto; do
 		datoIncorrecto=false;
 		echo "Inicio de sesion correcto"
 		echo "Bienvenido/a $nombre"
-		menu_principal;
+		menu_principal "$nombre";
 
 	else
 		datoIncorrecto=true;
