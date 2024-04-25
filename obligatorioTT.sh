@@ -29,10 +29,12 @@ menu_principal(){
 	echo "6) Ingresar letra contenida"
 	echo "7) Buscar la palabra"
  	echo "8) Ingresar letra vocal"
+	echo "9) Mostrar palabra con vocal del diccionario"
+    echo "11) Palabra capicua"
 	read dato;
 	datoNumero=$((dato));
 
-	while [[ $datoNumero -lt 1 || $datoNumero -gt 8 ]]; do
+	while [[ $datoNumero -lt 1 || $datoNumero -gt 11 ]]; do
 		echo "Dato ingresado incorrecto"
 		read dato;
 		datoNumero=$((dato));
@@ -107,28 +109,49 @@ menu_principal(){
 			menu_principal
 		else
 			fecha=$(date +"%Y-%m-%d")
-                        palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
-                        palabrasDiccionario=$(grep -c "" $diccionario)
+            palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
+            palabrasDiccionario=$(grep -c "" $diccionario)
 			porcentaje=$(bc <<< "scale=2; ($palabrasEncontradas * 100 / $palabrasDiccionario)")
-                        grep "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario
-
-                        registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
-                        echo "$registro" >> $registroDiccionario
+            registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
+            grep "^$verificarPrimerLetra.*$verificarLetraContenida.*$verificarUltimaletra$" $diccionario;
+            echo "$registro" >> $registroDiccionario
 			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
 			read dato
 			validar_error $dato
 			menu_principal
 		fi
-	 elif  [ $datoNumero = 8 ]; then
-                echo "Ingrese la letra vocal"
+	elif  [ $datoNumero = 8 ]; then
+        echo "Ingrese la letra vocal"
+        read letraVocal
+        while [ ${#letraVocal} -ne 1 ] || [ $letraVocal != "a" ] && [ $letraVocal != "e" ] && [ $letraVocal != "i" ] && [ $letraVocal != "o" ] && [ $letraVocal != "u" ] && [ $letraVocal != "A" ] && [ $letraVocal != "E" ] && [ $letraVocal != "I" ] && [ $letraVocal != "O" ] && [ $letraVocal != "U" ]; do 
+                echo "La cadena debe contener una sola letra y debe ser vocal"
                 read letraVocal
-                while [ ${#letraVocal} -ne 1 ] || [ $letraVocal != "a" ] && [ $letraVocal != "e" ] && [ $letraVocal != "i" ] && [ $letraVocal != "o" ] && [ $letraVocal != "u" ] && [ $letraVocal != "A" ] && [ $letraVocal != "E" ] && [ $letraVocal != "I" ] && [ $letraVocal != "O" ] && [ $letraVocal != "U" ]; do 
-                        echo "La cadena debe contener una sola letra y debe ser vocal"
-                        read letraVocal
-                done
-                echo "Letra vocal guardada"
-                menu_principal
+        done
+        echo "Letra vocal guardada"
+        menu_principal
+	elif [ $datoNumero = 9 ]; then
+        echo "Estas son las palabras del diccionario que contienen unicamente la vocal $letraVocal"
+        grep -i "^[^aeiou]*[$letraVocal][^aeiou]*$" $diccionario
+        menu_principal
+	elif [ $datoNumero = 11 ]; then
+        echo "Ingrese palabra a verificar"
+        read palabra
+        alreves=""
+        ok=1
+        len=${#palabra}
+        for (( i=$len-1; i>=0; i-- )) do
+            alreves="$alreves${palabra:$i:1}"
+        done
+        if [ "$palabra" != "$alreves" ]; then
+            ok=0
         fi
+        if [ $ok -eq 1 ]; then
+            echo "La palabra ingresada es capicua"
+        else
+            echo "La palabra igresada NO es capicua"
+        fi
+        menu_principal
+    fi
 }
 
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
