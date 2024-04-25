@@ -5,16 +5,6 @@ diccionario="diccionario.txt";
 registroDiccionario="registroDiccionario.txt";
 datoIncorrecto=true;
 
-#En esta parte se encuentra la funcion de validar error, es una funcion que valida el digito para salir de cada submenu
-
-validar_error(){
-	while [[ $1 != "s" && $1 != "S" ]]; do
-        	 echo "Dato incorrecto"
-                 read $1
-        done
-
-}
-
 #En esta parte se encuentra la funcion de menu principal con toda su logica dentro
 
 menu_principal(){
@@ -30,7 +20,7 @@ menu_principal(){
 	echo "7) Buscar la palabra"
  	echo "8) Ingresar letra vocal"
 	echo "9) Mostrar palabra con vocal del diccionario"
-    echo "11) Palabra capicua"
+    	echo "11) Palabra capicua"
 	read dato;
 	datoNumero=$((dato));
 
@@ -44,7 +34,10 @@ menu_principal(){
 		cat $usuarios;
 		echo "Para volver digite (S)"
 		read salir;
-		validar_error $salir
+		while [[ $salir != "s" && $salir != "S" ]]; do
+                	echo "Dato incorrecto"
+                	read $salir
+        	done
 		menu_principal;
 	elif [ $datoNumero = 2 ]; then
 		echo "Ingrese nombre de nuevo usuario"
@@ -117,41 +110,49 @@ menu_principal(){
             echo "$registro" >> $registroDiccionario
 			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
 			read dato
-			validar_error $dato
+			while [[ $dato != "s" && $dato != "S" ]]; do
+                 		echo "Dato incorrecto"
+                 		read $dato
+        		done
 			menu_principal
 		fi
 	elif  [ $datoNumero = 8 ]; then
-        echo "Ingrese la letra vocal"
-        read letraVocal
-        while [ ${#letraVocal} -ne 1 ] || [ $letraVocal != "a" ] && [ $letraVocal != "e" ] && [ $letraVocal != "i" ] && [ $letraVocal != "o" ] && [ $letraVocal != "u" ] && [ $letraVocal != "A" ] && [ $letraVocal != "E" ] && [ $letraVocal != "I" ] && [ $letraVocal != "O" ] && [ $letraVocal != "U" ]; do 
-                echo "La cadena debe contener una sola letra y debe ser vocal"
-                read letraVocal
-        done
-        echo "Letra vocal guardada"
-        menu_principal
+        	echo "Ingrese la letra vocal"
+        	read letraVocal
+        	while [ ${#letraVocal} -ne 1 ] || [ $letraVocal != "a" ] && [ $letraVocal != "e" ] && [ $letraVocal != "i" ] && [ $letraVocal != "o" ] && [ $letraVocal != "u" ] && [ $letraVocal != "A" ] && [ $letraVocal != "E" ] && [ $letraVocal != "I" ] && [ $letraVocal != "O" ] && [ $letraVocal != "U" ]; do 
+                	echo "La cadena debe contener una sola letra y debe ser vocal"
+                	read letraVocal
+        	done
+        	echo "Letra vocal guardada"
+        	menu_principal
 	elif [ $datoNumero = 9 ]; then
-        echo "Estas son las palabras del diccionario que contienen unicamente la vocal $letraVocal"
-        grep -i "^[^aeiou]*[$letraVocal][^aeiou]*$" $diccionario
-        menu_principal
+		if [ -z "$letraVocal" ]; then
+			echo "Debe ingresar una letra vocal en la opcion 8"
+			menu_principal
+		else
+        		echo "Estas son las palabras del diccionario que contienen unicamente la vocal $letraVocal"
+        		grep -i "^[^aeiou]*[$letraVocal][^aeiou]*$" $diccionario
+        		menu_principal
+		fi
 	elif [ $datoNumero = 11 ]; then
-        echo "Ingrese palabra a verificar"
-        read palabra
-        alreves=""
-        ok=1
-        len=${#palabra}
-        for (( i=$len-1; i>=0; i-- )) do
-            alreves="$alreves${palabra:$i:1}"
-        done
-        if [ "$palabra" != "$alreves" ]; then
-            ok=0
-        fi
-        if [ $ok -eq 1 ]; then
-            echo "La palabra ingresada es capicua"
-        else
-            echo "La palabra igresada NO es capicua"
-        fi
-        menu_principal
-    fi
+        	echo "Ingrese palabra a verificar"
+        	read palabra
+       		alreves=""
+        	ok=1
+        	len=${#palabra}
+        	for (( i=$len-1; i>=0; i-- )) do
+            		alreves="$alreves${palabra:$i:1}"
+        	done
+        	if [ "$palabra" != "$alreves" ]; then
+            		ok=0
+        	fi
+        	if [ $ok -eq 1 ]; then
+            		echo "La palabra ingresada es capicua"
+        	else
+            		echo "La palabra igresada NO es capicua"
+        	fi
+        	menu_principal
+    	fi
 }
 
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
@@ -163,9 +164,9 @@ while $datoIncorrecto; do
 
 	echo "Ingrese password";
 
-	read password;
+	read -rs password;
 
-	if grep -q "usuario: *$nombre, *password: *$password" $usuarios; then
+	if grep -q "usuario: *$nombre, *password: *$password" $usuarios && [ -n "$password" ]; then
 		datoIncorrecto=false;
 		echo "Inicio de sesion correcto"
 		echo "Bienvenido/a $nombre"
