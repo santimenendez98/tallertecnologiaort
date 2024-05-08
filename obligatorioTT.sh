@@ -31,6 +31,7 @@ menu_principal(){
  	echo "7) Ingresar letra vocal"
 	echo "8) Mostrar palabra con vocal del diccionario"
     	echo "9) Palabra capicua"
+	echo "10) Ingrese cantidad de datos"
 	echo "11) Cerrar Sesion"
 	read dato;
 	datoNumero=$((dato));
@@ -175,6 +176,33 @@ menu_principal(){
 		echo "Para volver al menu ingrese (S)"
 		read salir
                 verificar_salir $salir
+	elif [ $datoNumero = 10 ]; then 
+		clear 
+		echo "Ingrese cantidad de datos" 
+		read cantidad
+    		echo "Ingrese dato 1"
+    		read primerDato
+    		mayor=$primerDato
+    		menor=$primerDato
+   		suma=$primerDato
+    		contador=1
+		promedio=0
+    		for (( i=2; i<=$cantidad; i++ )); do
+        		echo "Ingrese dato $i"
+        		read dato
+        		suma=$((suma + dato))
+        		contador=$((contador + 1))
+        		if [ $dato -gt $mayor ]; then
+            			mayor=$dato
+        		elif [ $dato -lt $menor ]; then
+            			menor=$dato
+        		fi
+		done
+		promedio=$((suma / contador))
+		echo "El promedio es: $promedio, el mayor es: $mayor y el menor es: $menor"
+		echo "Para volver al menu ingrese (S)"
+		read salir
+		verificar_salir $salir	
 	elif [ $datoNumero = 11 ]; then
 		clear
                 echo "Estas seguro de cerrar sesion? Ingrese (S) de lo contrario se volvera al menu principal"
