@@ -5,22 +5,33 @@ diccionario="diccionario.txt";
 registroDiccionario="registroDiccionario.txt";
 datoIncorrecto=true;
 
+verificar_salir(){
+	local opcion=$1
+	while [[ $opcion != "s" && $opcion != "S" ]]; do
+        	echo "Dato incorrecto"
+                read opcion
+        done
+	menu_principal
+}
+
+
 #En esta parte se encuentra la funcion de menu principal con toda su logica dentro
 
 menu_principal(){
+	clear
 	echo "----------------"
 	echo "Menu Principal"
 	echo "----------------"
 	echo "1) Ver lista de usuarios"
 	echo "2) Dar de alta un usuario"
-	echo "3) Cerrar Sesion"
-	echo "4) Ingresar letra inicial"
-	echo "5) Ingresar letra final"
-	echo "6) Ingresar letra contenida"
-	echo "7) Buscar la palabra"
- 	echo "8) Ingresar letra vocal"
-	echo "9) Mostrar palabra con vocal del diccionario"
-    	echo "11) Palabra capicua"
+	echo "3) Ingresar letra inicial"
+	echo "4) Ingresar letra final"
+	echo "5) Ingresar letra contenida"
+	echo "6) Buscar la palabra"
+ 	echo "7) Ingresar letra vocal"
+	echo "8) Mostrar palabra con vocal del diccionario"
+    	echo "9) Palabra capicua"
+	echo "11) Cerrar Sesion"
 	read dato;
 	datoNumero=$((dato));
 
@@ -31,15 +42,13 @@ menu_principal(){
 	done;
 
 	if [ $datoNumero = 1 ]; then
+		clear
 		cat $usuarios;
-		echo "Para volver digite (S)"
+		echo "Para volver al menu digite (S)"
 		read salir;
-		while [[ $salir != "s" && $salir != "S" ]]; do
-                	echo "Dato incorrecto"
-                	read $salir
-        	done
-		menu_principal;
+		verificar_salir $salir;
 	elif [ $datoNumero = 2 ]; then
+		clear
 		echo "Ingrese nombre de nuevo usuario"
 		read nuevoNombreUsuario;
 		echo "Ingrese password"
@@ -48,21 +57,18 @@ menu_principal(){
 		
 		if grep -q "usuario: $nuevoNombreUsuario" $usuarios; then
 		       	echo "El usuario ya existe"
-		       	menu_principal
+		       	echo "Para volver al menu digite (S)"
+                	read salir;
+                	verificar_salir $salir;
 	       	else
 			echo "$nuevoUsuario" >> $usuarios
 	 		echo "Usuario creado correctamente"
-			menu_principal
+			echo "Para volver al menu digite (S)"
+                	read salir;
+                	verificar_salir $salir;
 		fi		
 	elif [ $datoNumero = 3 ]; then
-		echo "Estas seguro de cerrar sesion? Ingrese (S) de lo contrario se volvera al menu principal"
-		read alerta;
-		if [ $alerta = "S" ] || [ $alerta = "s" ]; then
-			echo "Sesion cerrada"
-		else
-			menu_principal
-		fi
-	elif [ $datoNumero = 4 ]; then
+		clear
 		echo "Ingrese la letra inicial"
 		read letraInicial
 		while [ ${#letraInicial} -ne 1 ]; do
@@ -70,8 +76,11 @@ menu_principal(){
 			read letraInicial
 		done
 		echo "Letra inicial guardada"
-		menu_principal
-	elif [ $datoNumero = 5 ]; then
+		echo "Para volver al menu digite (S)"
+                read salir;
+                verificar_salir $salir;
+	elif [ $datoNumero = 4 ]; then
+		clear
 		echo "Ingrese la letra final"
                 read letraFinal
                 while [ ${#letraFinal} -ne 1 ]; do
@@ -79,8 +88,11 @@ menu_principal(){
                         read letraFinal
                 done
                 echo "Letra final guardada"
-                menu_principal
-	elif [ $datoNumero = 6 ]; then
+                echo "Para volver al menu digite (S)"
+                read salir;
+                verificar_salir $salir;
+	elif [ $datoNumero = 5 ]; then
+		clear
 		echo "Ingrese la letra contenida"
                 read letraContenida
                 while [ ${#letraContenida} -ne 1 ]; do
@@ -88,35 +100,36 @@ menu_principal(){
                         read letraContenida
                 done
                 echo "Letra contenida guardada"
-                menu_principal
-	elif [ $datoNumero = 7 ]; then
+                echo "Para volver al menu digite (S)"
+                read salir;
+                verificar_salir $salir;
+	elif [ $datoNumero = 6 ]; then
 
 		#Opcion para devolver palabras del diccionario que cumplen con la opcion 4,5 y 6. Aparte crea un registro dentro del archivo registroDiccionario.txt
-
+		clear
 		verificarPrimerLetra="${letraInicial:0:1}"
 		verificarUltimaletra="${letraFinal: -1}"
 		verificarLetraContenida="$letraContenida"
 
 		if [ ${#letraInicial} -ne 1 ] || [ ${#letraFinal} -ne 1 ] || [ ${#letraContenida} -ne 1 ]; then
 			echo "Se debe ingresar todos los datos antes de buscar la palabra"
-			menu_principal
+			echo "Para volver al menu digite (S)"
+			read salir
+			verificar_salir $salir
 		else
 			fecha=$(date +"%Y-%m-%d")
-            palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
-            palabrasDiccionario=$(grep -c "" $diccionario)
+            		palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
+            		palabrasDiccionario=$(grep -c "" $diccionario)
 			porcentaje=$(bc <<< "scale=2; ($palabrasEncontradas * 100 / $palabrasDiccionario)")
-            registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
-            grep "^$verificarPrimerLetra.*$verificarLetraContenida.*$verificarUltimaletra$" $diccionario;
-            echo "$registro" >> $registroDiccionario
+            		registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
+            		grep "^$verificarPrimerLetra.*$verificarLetraContenida.*$verificarUltimaletra$" $diccionario;
+            		echo "$registro" >> $registroDiccionario
 			echo "Las palabras que inician con ($letraInicial), terminan con ($letraFinal) y contienen la letra ($letraContenida) son estas, para vovolver al menu principal digite (S)";
-			read dato
-			while [[ $dato != "s" && $dato != "S" ]]; do
-                 		echo "Dato incorrecto"
-                 		read $dato
-        		done
-			menu_principal
+			read salir
+                	verificar_salir $salir;
 		fi
-	elif  [ $datoNumero = 8 ]; then
+	elif  [ $datoNumero = 7 ]; then
+		clear
         	echo "Ingrese la letra vocal"
         	read letraVocal
         	while [ ${#letraVocal} -ne 1 ] || [ $letraVocal != "a" ] && [ $letraVocal != "e" ] && [ $letraVocal != "i" ] && [ $letraVocal != "o" ] && [ $letraVocal != "u" ] && [ $letraVocal != "A" ] && [ $letraVocal != "E" ] && [ $letraVocal != "I" ] && [ $letraVocal != "O" ] && [ $letraVocal != "U" ]; do 
@@ -124,17 +137,25 @@ menu_principal(){
                 	read letraVocal
         	done
         	echo "Letra vocal guardada"
-        	menu_principal
-	elif [ $datoNumero = 9 ]; then
+        	echo "Para volver al menu digite (S)"
+                read salir;
+                verificar_salir $salir;
+	elif [ $datoNumero = 8 ]; then
+		clear
 		if [ -z "$letraVocal" ]; then
-			echo "Debe ingresar una letra vocal en la opcion 8"
-			menu_principal
+			echo "Debe ingresar una letra vocal en la opcion 7"
+			echo "Para volver al menu digite (S)"
+                	read salir;
+                	verificar_salir $salir;
 		else
         		echo "Estas son las palabras del diccionario que contienen unicamente la vocal $letraVocal"
         		grep -i "^[^aeiou]*[$letraVocal][^aeiou]*$" $diccionario
-        		menu_principal
+        		echo "Para volver al menu digite (S)"
+                	read salir;
+                	verificar_salir $salir;
 		fi
-	elif [ $datoNumero = 11 ]; then
+	elif [ $datoNumero = 9 ]; then
+		clear
         	echo "Ingrese palabra a verificar"
         	read palabra
        		alreves=""
@@ -150,14 +171,26 @@ menu_principal(){
             		echo "La palabra ingresada es capicua"
         	else
             		echo "La palabra igresada NO es capicua"
-        	fi
-        	menu_principal
-    	fi
+		fi
+		echo "Para volver al menu ingrese (S)"
+		read salir
+                verificar_salir $salir
+	elif [ $datoNumero = 11 ]; then
+		clear
+                echo "Estas seguro de cerrar sesion? Ingrese (S) de lo contrario se volvera al menu principal"
+                read alerta;
+                if [ $alerta = "S" ] || [ $alerta = "s" ]; then
+                        echo "Sesion cerrada"
+                else
+                        menu_principal
+                fi
+	fi
 }
 
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
 
 while $datoIncorrecto; do
+	clear
 	echo "Ingrese nombre de usuario";
 
 	read nombre;

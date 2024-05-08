@@ -7,3 +7,5 @@ Fecha de busqueda: 2024-04-25, Cantidad de palabras encontradas: 1551, Total de 
 Fecha de busqueda: 2024-04-25, Cantidad de palabras encontradas: 2797, Total de palabras del diccionario: 174849, Porcentaje de palabras encontradas: %, Usuario: admin
 Fecha de busqueda: 2024-04-25, Cantidad de palabras encontradas: 588, Total de palabras del diccionario: 174849, Porcentaje de palabras encontradas: %, Usuario: admin
 Fecha de busqueda: 2024-04-25, Cantidad de palabras encontradas: 1684, Total de palabras del diccionario: 174849, Porcentaje de palabras encontradas: %, Usuario: admin
+Fecha de busqueda: 2024-04-25, Cantidad de palabras encontradas: 2183, Total de palabras del diccionario: 174849, Porcentaje de palabras encontradas: %, Usuario: admin
+Fecha de busqueda: 2024-05-08, Cantidad de palabras encontradas: 5110, Total de palabras del diccionario: 174849, Porcentaje de palabras encontradas: %, Usuario: admin
