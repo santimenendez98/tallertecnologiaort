@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+#Obligatorio Taller de Tecnologias realizado por: Santiago Menendez Nro.(262188), Ornella Sarantes Nro.(323579), Maria Teresa Nro.()
 
 usuarios="usuarios.txt";
 diccionario="diccionario.txt";
@@ -121,7 +123,7 @@ menu_principal(){
 			fecha=$(date +"%Y-%m-%d")
             		palabrasEncontradas=$(grep -c "^$verificarPrimerLetra.*$verificarUltimaletra.*$verificarLetraContenida" $diccionario)
             		palabrasDiccionario=$(grep -c "" $diccionario)
-			porcentaje=$(bc <<< "scale=2; ($palabrasEncontradas * 100 / $palabrasDiccionario)")
+					porcentaje=$(bc <<< "scale=2; ($palabrasEncontradas * 100 / $palabrasDiccionario)")
             		registro="Fecha de busqueda: $fecha, Cantidad de palabras encontradas: $palabrasEncontradas, Total de palabras del diccionario: $palabrasDiccionario, Porcentaje de palabras encontradas: $porcentaje%, Usuario: "$nombre""
             		grep "^$verificarPrimerLetra.*$verificarLetraContenida.*$verificarUltimaletra$" $diccionario;
             		echo "$registro" >> $registroDiccionario
@@ -218,7 +220,6 @@ menu_principal(){
 #Esta parte verifica si el usuario esta registrado y permite el inicio de sesion
 
 while $datoIncorrecto; do
-	clear
 	echo "Ingrese nombre de usuario";
 
 	read nombre;
@@ -227,7 +228,7 @@ while $datoIncorrecto; do
 
 	read -rs password;
 
-	if grep -q "usuario: *$nombre, *password: *$password" $usuarios && [ -n "$password" ]; then
+	if grep -q "usuario: *$nombre, *password: *$password" $usuarios; then
 		datoIncorrecto=false;
 		echo "Inicio de sesion correcto"
 		echo "Bienvenido/a $nombre"
@@ -235,6 +236,7 @@ while $datoIncorrecto; do
 
 	else
 		datoIncorrecto=true;
+		clear
 		echo "Usuario y/o password no existen"
 	fi
 done;

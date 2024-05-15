@@ -1,2 +1,4 @@
 usuario: admin, password: admin
 usuario: santi, password: probando
+usuario: orne, password: 1234
+usuario: tete, password: probando
